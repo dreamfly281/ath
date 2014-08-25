@@ -42,6 +42,7 @@ extern unsigned int ath10k_debug_mask;
 __printf(1, 2) int ath10k_info(const char *fmt, ...);
 __printf(1, 2) int ath10k_err(const char *fmt, ...);
 __printf(1, 2) int ath10k_warn(const char *fmt, ...);
+void ath10k_print_driver_info(struct ath10k *ar);
 
 #ifdef CONFIG_ATH10K_DEBUGFS
 int ath10k_debug_start(struct ath10k *ar);
@@ -53,6 +54,10 @@ void ath10k_debug_read_service_map(struct ath10k *ar,
 				   size_t map_size);
 void ath10k_debug_read_target_stats(struct ath10k *ar,
 				    struct wmi_stats_event *ev);
+struct ath10k_fw_crash_data *
+ath10k_debug_get_new_fw_crash_data(struct ath10k *ar);
+
+void ath10k_debug_dbglog_add(struct ath10k *ar, u8 *buffer, int len);
 
 #define ATH10K_DFS_STAT_INC(ar, c) (ar->debug.dfs_stats.c++)
 
@@ -84,6 +89,17 @@ static inline void ath10k_debug_read_service_map(struct ath10k *ar,
 static inline void ath10k_debug_read_target_stats(struct ath10k *ar,
 						  struct wmi_stats_event *ev)
 {
+}
+
+static inline void ath10k_debug_dbglog_add(struct ath10k *ar, u8 *buffer,
+					   int len)
+{
+}
+
+static inline struct ath10k_fw_crash_data *
+ath10k_debug_get_new_fw_crash_data(struct ath10k *ar)
+{
+	return NULL;
 }
 
 #define ATH10K_DFS_STAT_INC(ar, c) do { } while (0)
