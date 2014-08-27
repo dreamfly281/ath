@@ -1290,6 +1290,15 @@ static int ath10k_wmi_event_debug_mesg(struct ath10k *ar, struct sk_buff *skb)
 
 	trace_ath10k_wmi_dbglog(skb->data, skb->len);
 
+	spin_lock_bh(&ar->data_lock);
+	/* First 4 bytes are a messages-dropped-due-to-overflow counter,
+	 * and should not be recorded in the dbglog buffer, so we skip
+	 * them.
+	 */
+	ath10k_dbg_save_fw_dbg_buffer(ar, (__le32 *)(skb->data + 4),
+				      (skb->len - 4)/sizeof(u32));
+	spin_unlock_bh(&ar->data_lock);
+
 	return 0;
 }
 
